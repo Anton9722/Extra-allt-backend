@@ -55,18 +55,18 @@ public class UserService {
         try{
             User user = findUserByUsername(username);
             if(user == null) {
-                return new LoginResponse(false, "We couldn't find an account with that username");
+                return new LoginResponse(false, "We couldn't find an account with that username", null);
             } else {
                 boolean isPasswordCorrect = passwordEncoder.matches(password, user.getPassword());
                 if(isPasswordCorrect) {
-                    return new LoginResponse(true, "Login Successful");
+                    return new LoginResponse(true, "Login Successful", user.getId());
                 } else {
-                    return new LoginResponse(false, "Password incorrect");
+                    return new LoginResponse(false, "Password incorrect", null);
                 }
             }
         } catch (Exception e) {
             System.out.println("EXCEPTION: " + e);
-            return new LoginResponse(false, "An error occurred while verifying login");
+            return new LoginResponse(false, "An error occurred while verifying login", null);
         }
     }
 
