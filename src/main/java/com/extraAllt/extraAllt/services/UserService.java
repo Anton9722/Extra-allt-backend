@@ -59,7 +59,6 @@ public class UserService {
             } else {
                 boolean isPasswordCorrect = passwordEncoder.matches(password, user.getPassword());
                 if(isPasswordCorrect) {
-                    System.out.println("kör i if för att returna");
                     return new LoginResponse(true, "Login Successful");
                 } else {
                     return new LoginResponse(false, "Password incorrect");
