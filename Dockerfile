@@ -1,5 +1,5 @@
-# Bygger applikationen
-FROM eclipse-temurin:17-jdk-jammy as builder
+# Bygger applikationen med JDK 21
+FROM eclipse-temurin:21-jdk-jammy as builder
 
 # Ställer in arbetskatalog
 WORKDIR /opt/app
@@ -21,7 +21,7 @@ COPY ./src ./src
 RUN ./mvnw clean install -DskipTests
 
 # Skapa det slutgiltiga bilden
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:21-jre-jammy
 
 # Ställer in arbetskatalog
 WORKDIR /opt/app
