@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,7 @@ public class CodeExecutionController {
             // Skapa en temporär Java-fil
             String code = codeRequest.getCode();
             String expectedResult = codeRequest.getResultWeWant();
-            File tempFile = File.createTempFile("UserCode", ".java"); // Skapa fil med standardnamn
+            File tempFile = File.createTempFile("UserCode", ".java");
             try (PrintWriter out = new PrintWriter(tempFile)) {
                 out.println(code);
             }

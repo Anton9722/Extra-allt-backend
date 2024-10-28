@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.extraAllt.extraAllt.models.LoginResponse;
 import com.extraAllt.extraAllt.models.User;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -67,6 +69,28 @@ public class UserService {
         } catch (Exception e) {
             System.out.println("EXCEPTION: " + e);
             return new LoginResponse(false, "An error occurred while verifying login", null);
+        }
+    }
+
+    // hämta alla users
+    public List<User> getAllUsers() {
+        return mongoOperations.findAll(User.class);
+    }
+
+    //updaterar user points
+    public void updatePoints(int points, String userId){
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("id").is(userId));
+            User user = mongoOperations.findOne(query, User.class);
+            
+            int allPoints = user.getPoints() + points;
+
+            Update update = Update.update("points", allPoints);
+            mongoOperations.updateFirst(query, update, User.class);
+            
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
