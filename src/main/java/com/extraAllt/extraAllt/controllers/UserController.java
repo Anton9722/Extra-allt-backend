@@ -1,9 +1,11 @@
 package com.extraAllt.extraAllt.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,17 @@ public class UserController {
         String password = loginRequest.getPassword();
         return userService.loginUser(username, password);
     }
+
+    //hämta username från account id
+    @GetMapping("/get-username/{id}")
+    public ResponseEntity<String> getUsername(@PathVariable String id) {
+        String username = userService.getUsername(id);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        return ResponseEntity.ok(username);
+    }
+
 
     //hämta alla users
     @GetMapping("/get-all")

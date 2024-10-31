@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +21,7 @@ public class CodeExecutionController {
     @PostMapping("/run-code")
     public ResponseEntity<String> runCode(@RequestBody CodeRequest codeRequest) {
         try {
-            // Skapa en temporär Java-fil
+            // Skapa en temporär java fil
             String code = codeRequest.getCode();
             String expectedResult = codeRequest.getResultWeWant();
             File tempFile = File.createTempFile("UserCode", ".java");
@@ -31,12 +29,12 @@ public class CodeExecutionController {
                 out.println(code);
             }
     
-            // Kompilera Java-koden
+            // Kompilera java koden
             Process compileProcess = new ProcessBuilder("javac", tempFile.getAbsolutePath())
                     .redirectErrorStream(true)
                     .start();
     
-            // Fånga kompilatorns output
+            // Fånga output från koden
             StringBuilder compileOutput = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(compileProcess.getInputStream()))) {
                 String line;
@@ -45,17 +43,14 @@ public class CodeExecutionController {
                 }
             }
     
-            compileProcess.waitFor(); // Vänta på att kompileringen ska avslutas
+            compileProcess.waitFor();
     
-            // Om kompileringen gick bra, kör programmet
             if (compileProcess.exitValue() == 0) {
-                // Hämta klassnamnet som "UserCode" (eftersom vi definierar filnamnet som "UserCode")
                 String className = "UserCode";
                 Process runProcess = new ProcessBuilder("java", "-cp", tempFile.getParent(), className)
                         .redirectErrorStream(true)
                         .start();
     
-                // Fånga output från processen
                 StringBuilder output = new StringBuilder();
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()))) {
                     String line;
@@ -64,15 +59,14 @@ public class CodeExecutionController {
                     }
                 }
     
-                runProcess.waitFor(); // Vänta tills programmet är klart
+                runProcess.waitFor(); 
                 
                 if(output.toString().trim().equals(expectedResult)){
                     return ResponseEntity.ok("Correct!"); 
                 } else{
-                    return ResponseEntity.ok("Not Correct " + output.toString()); // Skicka tillbaka output
+                    return ResponseEntity.ok("Not Correct");
                 }
             } else {
-                // Fånga felmeddelanden om kompileringen misslyckades
                 int errorIndex = compileOutput.toString().indexOf("error:");
                 if(errorIndex != -1) {
                     String trimmedErrorMessage = compileOutput.toString().substring(errorIndex);
@@ -81,7 +75,7 @@ public class CodeExecutionController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Syntax error:\n" + compileOutput.toString());
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Logga fel
+            e.printStackTrace(); 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: " + e.toString());
         }
     }

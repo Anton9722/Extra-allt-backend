@@ -51,6 +51,19 @@ public class UserService {
         query.addCriteria(Criteria.where("username").is(username));
         return mongoOperations.findOne(query, User.class);
     }
+
+    public String getUsername(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        User user = mongoOperations.findOne(query, User.class);
+        
+        if (user == null) {
+            System.out.println("No user found with id: " + id);
+            return null; 
+        }
+        
+        return user.getUsername(); 
+    }
     
     //Verifiera inloggning
     public LoginResponse loginUser(String username, String password){
